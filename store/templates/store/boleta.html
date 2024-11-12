@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Boleta de Compra</title>
+</head>
+<body>
+    <h1>Boleta de Compra</h1>
+    <p>Producto: {{ product }}</p>
+    <p>Precio: ${{ price }}</p>
+    <p>ID de Transacción: {{ transaction_id }}</p>
+    <p>Cliente: {{ buyer }}</p>
+    <p>Fecha: {{ date }}</p>
+
+    <!-- Botón para descargar la boleta en PDF -->
+    <a href="{% url 'boleta_pdf' %}" class="button">Descargar en PDF</a>
+</body>
+</html>

@@ -4,6 +4,66 @@ import json
 import datetime
 from .models import *
 from .utils import cookieCart, cartData, guestOrder
+from paypal.standard.forms import PayPalPaymentsForm
+from django.conf import settings
+from django.urls import reverse
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+import pdfkit
+
+def boleta_pdf(request):
+    # Datos de ejemplo, en la práctica recibirías esto de la transacción de PayPal
+    transaction_data = {
+        'product': 'Nombre del producto',
+        'price': 1500,
+        'transaction_id': 'ABC12345',
+        'buyer': 'Cliente Ejemplo',
+        'date': '2024-11-11',
+    }
+
+    # Renderiza el HTML con los datos de la transacción
+    html = render_to_string('boleta.html', transaction_data)
+
+    # Configuración de PDFKit para generar el PDF
+    pdfkit_config = pdfkit.configuration(wkhtmltopdf='/usr/local/bin/wkhtmltopdf')  # Asegúrate de tener la ruta correcta
+    pdf = pdfkit.from_string(html, False, configuration=pdfkit_config)
+
+    # Genera la respuesta como un archivo PDF
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="boleta.pdf"'
+    
+    return response
+
+def boleta_view(request):
+    # Supongamos que obtienes los datos de la transacción
+    # En un caso real, podrías recuperar los datos desde una base de datos o desde PayPal IPN
+    transaction_data = {
+        'product': 'Nombre del producto',
+        'price': 10.00,
+        'transaction_id': 'ABC12345',
+        'buyer': 'Cliente Ejemplo',
+        'date': '2024-11-11',
+    }
+
+    # Renderiza la boleta en la pantalla
+    return render(request, 'store/boleta.html', transaction_data)
+
+def paypal_payment_view(request):
+    # Ejemplo de datos para el formulario de PayPal
+    paypal_dict = {
+        "business": settings.PAYPAL_RECEIVER_EMAIL,
+        "amount": "10.00",  # Ajusta el precio dinámicamente si es necesario
+        "item_name": "Nombre del producto",
+        "invoice": "unico-id-de-invoice",  # ID único para la transacción
+        "notify_url": request.build_absolute_uri(reverse('paypal-ipn')),
+        "return_url": request.build_absolute_uri(reverse('boleta')),
+        "cancel_return": request.build_absolute_uri(reverse('cancel_url')),  # URL de cancelación
+    }
+
+    # Crear el formulario de PayPal con los datos
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    context = {"form": form}
+    return render(request, "store/paypal_payment.html", context)
 
 def store(request):
     data = cartData(request)

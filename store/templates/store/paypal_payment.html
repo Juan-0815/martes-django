@@ -1,0 +1,6 @@
+<h2>Realizar pago con PayPal</h2>
+<form action="{% url 'paypal_payment' %}" method="post">
+    {% csrf_token %}
+    {{ form.render }}  <!-- Renderiza el botón de pago de PayPal -->
+    <button type="submit">Pagar ahora con PayPal</button>
+</form>

@@ -7,6 +7,7 @@ urlpatterns = [
  path('admin/', admin.site.urls),
     path('registration', include('registration.urls')),  # URLs de la aplicación de registro
     path('', include('store.urls')),  # Asegúrate de que esta sea la ruta correcta
+    path('paypal/', include('paypal.standard.ipn.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

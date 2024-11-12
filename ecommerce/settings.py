@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'paypal.standard.ipn',
     'store.apps.StoreConfig',
     'registration'
 ]
@@ -131,3 +131,7 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/images/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'static/images')
+
+# Configuración de PayPal
+PAYPAL_RECEIVER_EMAIL = 'tu-email@ejemplo.com'  # Reemplaza con tu correo de PayPal
+PAYPAL_TEST = False  # Cambia a False en producción
